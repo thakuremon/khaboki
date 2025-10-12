@@ -1,12 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:khaboki2/helper_function.dart';
-import 'login_page.dart';
-import 'login_authentication.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'home.dart';
-import 'firebase_options.dart';
-import 'error_message.dart';
-import 'regex.dart';
+import 'all_files.dart';
 
 class VendorRegistrationPage extends StatefulWidget {
   const VendorRegistrationPage({super.key});
@@ -204,6 +196,15 @@ class _VendorRegistrationPage extends State<VendorRegistrationPage> {
 
                   if (user != null) {
                     // Registration successful
+                    createUserProfile(
+                      user,
+                      nameController.text,
+                      '',
+                      phoneController.text,
+                      emailController.text,
+                      'vendor',
+                      user.photoURL ?? '',
+                    );
                     HelperFunction.navigate(context, HomePage());
                   } else {
                     ScaffoldMessenger.of(

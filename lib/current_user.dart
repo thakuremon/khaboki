@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'all_files.dart';
 
 class CurrentUser extends ChangeNotifier {
   User? _user; // FirebaseAuth user
@@ -9,9 +7,11 @@ class CurrentUser extends ChangeNotifier {
   User? get user => _user;
   Map<String, dynamic>? get profile => _profile;
 
+  String? get displayName => _profile?['name'];
+  String? get id => _profile?['id'];
+  String? get phone => _profile?['phone'];
   String? get uid => _user?.uid;
-  String? get email => _user?.email;
-  String? get displayName => _user?.displayName;
+  String? get email => _profile?['mail'];
   String? get photoURL => _user?.photoURL;
   String? get role => _profile?['role'];
 

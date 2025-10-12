@@ -1,13 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:khaboki2/helper_function.dart';
-import 'package:khaboki2/login_page.dart';
-import 'helper_function.dart';
-import 'user_profile.dart';
-import 'order_details.dart';
-import 'firebase_options.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'current_user.dart';
-import 'package:provider/provider.dart';
+import 'all_files.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -29,44 +20,7 @@ class HomePage extends StatelessWidget {
         backgroundColor: Colors.teal,
       ),
 
-      drawer: Drawer(
-        child: ListView(
-          children: [
-            DrawerHeader(
-              child: Text(
-                'Menu',
-                style: TextStyle(fontSize: 24, color: Colors.white),
-              ),
-              decoration: BoxDecoration(color: Colors.teal),
-            ),
-            ListTile(
-              leading: Icon(Icons.home),
-              title: Text('Home'),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.person),
-              title: Text('Profile'),
-              onTap: () => HelperFunction.navigate(context, UserProfile()),
-            ),
-            ListTile(
-              leading: Icon(Icons.info),
-              title: Text('about us'),
-              onTap: () {
-                // Navigate to settings page
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.logout),
-              title: Text('Logout'),
-              onTap: () => HelperFunction.navigate(context, LoginPage()),
-              // Navigate to settings pag,
-            ),
-          ],
-        ),
-      ),
+      drawer: buildDrawer(context, currentUser),
 
       body: Column(
         children: [

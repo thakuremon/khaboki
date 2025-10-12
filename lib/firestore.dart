@@ -1,17 +1,21 @@
-import 'firebase_options.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:khaboki2/firestore.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'all_files.dart';
 
 Future<void> createUserProfile(
   User user,
-  String role,
+  String name,
+  String id,
   String mail,
-  String gender,
+  String phone,
+  String role,
+  String photoUrl,
 ) async {
   await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
-    'role': role,
+    'name': name,
+    'id': id,
     'mail': mail,
+    'phone': phone,
+    'role': role,
+    'photoUrl': photoUrl,
   }, SetOptions(merge: true));
 }
 
@@ -29,12 +33,10 @@ Future<void> placeOrder({
   final counterRef = db.collection("counters").doc("orders");
 
   await db.runTransaction((transaction) async {
-    // Get the current counter
     final snapshot = await transaction.get(counterRef);
     int lastId = snapshot.exists ? snapshot["lastOrderId"] : 0;
     int newId = lastId + 1;
 
-    // Build order data
     final orderData = {
       "orderId": newId,
       "vendorId": vendorId,
@@ -48,20 +50,18 @@ Future<void> placeOrder({
       "createdAt": FieldValue.serverTimestamp(),
     };
 
-    // Save order with the same newId as the docId (optional)
     final orderRef = db.collection("orders").doc(newId.toString());
     transaction.set(orderRef, orderData);
 
-    // Update counter
     transaction.set(counterRef, {"lastOrderId": newId});
   });
 }
 
 Future<void> addProduct({
   required String vendorId,
-  required String name,
-  required String description,
-  required double cost,
+  required String productName,
+  required String produceDetails,
+  required double costPerUnit,
   required DateTime expireTime,
   required String photoUrl,
 }) async {
@@ -69,28 +69,57 @@ Future<void> addProduct({
   final counterRef = db.collection("counters").doc("products");
 
   await db.runTransaction((transaction) async {
-    // Get current product counter
     final snapshot = await transaction.get(counterRef);
     int lastId = snapshot.exists ? snapshot["lastProductId"] : 0;
     int newId = lastId + 1;
 
-    // Build product data
     final productData = {
       "itemId": newId,
       "vendorId": vendorId,
-      "name": name,
-      "description": description,
-      "cost": cost,
+      "productName": productName,
+      "productDetails": produceDetails,
+      "costPerUnit": costPerUnit,
       "expireTime": Timestamp.fromDate(expireTime),
-      "photo": photoUrl,
+      "photoUrl": photoUrl,
       "createdAt": FieldValue.serverTimestamp(),
     };
 
-    // Save product with itemId as docId
     final productRef = db.collection("products").doc(newId.toString());
     transaction.set(productRef, productData);
 
-    // Update product counter
     transaction.set(counterRef, {"lastProductId": newId});
   });
+}
+
+Future<List<Map<String, dynamic>>> getProductsByVendor(User user) async {
+  final querySnapshot = await FirebaseFirestore.instance
+      .collection('products')
+      .where('vendorId', isEqualTo: user.uid)
+      .get();
+
+  return querySnapshot.docs
+      .map((doc) => {'id': doc.id, ...doc.data()})
+      .toList();
+}
+
+Future<List<Map<String, dynamic>>> getOrdersByCustomer(User user) async {
+  final querySnapshot = await FirebaseFirestore.instance
+      .collection('orders')
+      .where('customerId', isEqualTo: user.uid)
+      .get();
+
+  return querySnapshot.docs
+      .map((doc) => {'id': doc.id, ...doc.data()})
+      .toList();
+}
+
+Future<List<Map<String, dynamic>>> getOrdersByVendor(User user) async {
+  final querySnapshot = await FirebaseFirestore.instance
+      .collection('orders')
+      .where('vendorId', isEqualTo: user.uid)
+      .get();
+
+  return querySnapshot.docs
+      .map((doc) => {'id': doc.id, ...doc.data()})
+      .toList();
 }

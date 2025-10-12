@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'firebase_options.dart';
+import 'all_files.dart';
 
 class OrderDetails extends StatefulWidget {
   const OrderDetails({super.key});

@@ -1,13 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:khaboki2/helper_function.dart';
-import 'package:khaboki2/user_registration_page.dart';
-import 'vendor_registration_page.dart';
-import 'user_profile.dart';
-import 'home.dart';
-import 'login_authentication.dart';
-import 'firebase_options.dart';
-import 'error_message.dart';
+import 'all_files.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -236,7 +227,27 @@ class _LoginPage extends State<LoginPage> {
                               Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: ElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () async {
+                                    User? user = await signIn(
+                                      vendorPhone.text,
+                                      vendorPassword.text,
+                                      error,
+                                    );
+
+                                    if (user != null) {
+                                      HelperFunction.navigate(
+                                        context,
+                                        HomePage(),
+                                      );
+                                    } else {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(content: Text(error.message!)),
+                                      );
+                                    }
+                                  },
+
                                   style: ElevatedButton.styleFrom(
                                     minimumSize: Size(200, 50),
                                     backgroundColor: Colors.teal,

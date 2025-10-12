@@ -1,13 +1,4 @@
-import 'user_registration_page.dart';
-import 'package:flutter/material.dart';
-import 'package:khaboki2/user_profile.dart';
-import 'package:khaboki2/vendor_registration_page.dart';
-import 'home.dart';
-import 'login_page.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'firebase_options.dart';
-import 'error_message.dart';
+import 'all_files.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -85,7 +76,6 @@ Future<User?> signIn(String email, String password, ErrorMessage error) async {
   }
 }
 
-// Sign out
 Future<void> signOut() async {
   await _auth.signOut();
 }
