@@ -189,7 +189,7 @@ class _VendorRegistrationPage extends State<VendorRegistrationPage> {
                   }
 
                   User? user = await signUp(
-                    phoneController.text,
+                    emailController.text,
                     passwordController.text,
                     error,
                   );
@@ -205,7 +205,7 @@ class _VendorRegistrationPage extends State<VendorRegistrationPage> {
                       'vendor',
                       user.photoURL ?? '',
                     );
-                    HelperFunction.navigate(context, HomePage());
+                    HelperFunction.navigate(context, VerifyEmailScreen());
                   } else {
                     ScaffoldMessenger.of(
                       context,

@@ -14,6 +14,8 @@ class CurrentUser extends ChangeNotifier {
   String? get email => _profile?['mail'];
   String? get photoURL => _user?.photoURL;
   String? get role => _profile?['role'];
+  bool get isEmailVerified => _user?.emailVerified ?? false;
+  bool get isLoggedIn => _user != null;
 
   CurrentUser() {
     // Listen to authentication state changes

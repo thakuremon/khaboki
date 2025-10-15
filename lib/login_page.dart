@@ -8,24 +8,27 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPage extends State<LoginPage> {
   bool studentLoginPage = true;
-  final TextEditingController userId = TextEditingController();
+  final TextEditingController userEmail = TextEditingController();
   final TextEditingController userPassword = TextEditingController();
   final TextEditingController vendorPassword = TextEditingController();
-  final TextEditingController vendorPhone = TextEditingController();
+  final TextEditingController vendorEmail = TextEditingController();
 
   ErrorMessage error = ErrorMessage();
 
   @override
   void dispose() {
-    userId.dispose();
+    userEmail.dispose();
     userPassword.dispose();
     vendorPassword.dispose();
-    vendorPhone.dispose();
+    vendorEmail.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    // signing out current user every time user lands into the login page
+    signOut();
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.teal,
@@ -104,11 +107,11 @@ class _LoginPage extends State<LoginPage> {
                               Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: TextField(
-                                  controller: userId,
+                                  controller: userEmail,
                                   keyboardType: TextInputType.text,
                                   decoration: InputDecoration(
                                     prefixIcon: Icon(Icons.badge),
-                                    labelText: 'student/faculty/staff id',
+                                    labelText: 'email',
                                     border: OutlineInputBorder(),
                                   ),
                                 ),
@@ -134,7 +137,7 @@ class _LoginPage extends State<LoginPage> {
                                 child: ElevatedButton(
                                   onPressed: () async {
                                     User? user = await signIn(
-                                      userId.text,
+                                      userEmail.text,
                                       userPassword.text,
                                       error,
                                     );
@@ -200,11 +203,11 @@ class _LoginPage extends State<LoginPage> {
                               Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: TextField(
-                                  controller: vendorPhone,
+                                  controller: vendorEmail,
                                   keyboardType: TextInputType.number,
                                   decoration: InputDecoration(
                                     prefixIcon: Icon(Icons.phone),
-                                    labelText: 'phone',
+                                    labelText: 'email',
                                     border: OutlineInputBorder(),
                                   ),
                                 ),
@@ -229,7 +232,7 @@ class _LoginPage extends State<LoginPage> {
                                 child: ElevatedButton(
                                   onPressed: () async {
                                     User? user = await signIn(
-                                      vendorPhone.text,
+                                      vendorEmail.text,
                                       vendorPassword.text,
                                       error,
                                     );

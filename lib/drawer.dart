@@ -5,11 +5,11 @@ Widget buildDrawer(BuildContext context, CurrentUser currentUser) {
     child: ListView(
       children: [
         DrawerHeader(
+          decoration: BoxDecoration(color: Colors.teal),
           child: Text(
             'Menu',
             style: TextStyle(fontSize: 24, color: Colors.white),
           ),
-          decoration: BoxDecoration(color: Colors.teal),
         ),
 
         ListTile(
@@ -24,7 +24,7 @@ Widget buildDrawer(BuildContext context, CurrentUser currentUser) {
           onTap: () => HelperFunction.navigate(context, UserProfile()),
         ),
 
-        currentUser.role == 'ventor'
+        currentUser.role == 'vendor'
             ? ListTile(
                 leading: Icon(Icons.add),
                 title: Text('Add Product'),

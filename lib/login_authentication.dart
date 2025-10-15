@@ -3,10 +3,15 @@ import 'all_files.dart';
 final FirebaseAuth _auth = FirebaseAuth.instance;
 
 Future<User?> signUp(String email, String password, ErrorMessage error) async {
-  email = email + '@khaboki.com';
   try {
     UserCredential userCred = await FirebaseAuth.instance
         .createUserWithEmailAndPassword(email: email, password: password);
+
+    // Send email verification
+    if (!userCred.user!.emailVerified) {
+      await userCred.user!.sendEmailVerification();
+    }
+
     return userCred.user;
   } on FirebaseAuthException catch (e) {
     switch (e.code) {
@@ -39,12 +44,12 @@ Future<User?> signUp(String email, String password, ErrorMessage error) async {
 }
 
 Future<User?> signIn(String email, String password, ErrorMessage error) async {
-  email = email + '@khaboki.com';
   try {
     UserCredential userCred = await _auth.signInWithEmailAndPassword(
       email: email,
       password: password,
     );
+
     return userCred.user;
   } on FirebaseAuthException catch (e) {
     switch (e.code) {

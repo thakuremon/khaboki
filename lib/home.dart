@@ -7,21 +7,13 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final currentUser = context.watch<CurrentUser>();
 
-    // navigate back if the user is not allowed to see this page
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   Navigator.of(context).pop();
-    // });
-    // return SizedBox.shrink();
-
     return Scaffold(
       appBar: AppBar(
         title: Row(children: [Text('Home Page'), SizedBox(width: 180)]),
         centerTitle: true,
         backgroundColor: Colors.teal,
       ),
-
       drawer: buildDrawer(context, currentUser),
-
       body: Column(
         children: [
           Text('Find your food'),
@@ -35,7 +27,6 @@ class HomePage extends StatelessWidget {
                   hintText: 'Search...',
                   filled: true,
                   fillColor: Colors.grey[200],
-
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(25),
                     borderSide: BorderSide.none,
@@ -44,97 +35,53 @@ class HomePage extends StatelessWidget {
               ),
             ),
           ),
-
           Expanded(
-            child: GridView(
-              padding: EdgeInsets.all(8),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
-                childAspectRatio: 0.75,
-              ),
-              children: [
-                PostWidget(
-                  userName: 'Menu1',
-                  postText: 'This is a sample post text.',
-                  imageUrl: 'assets/image/sample.jpg',
-                ),
-                PostWidget(
-                  userName: 'Menu2',
-                  postText: 'Another sample post text.',
-                  imageUrl: 'assets/image/sample.jpg',
-                ),
-                PostWidget(
-                  userName: 'Menu3',
-                  postText: 'Yet another sample post text.',
-                  imageUrl: 'assets/image/sample.jpg',
-                ),
-                PostWidget(
-                  userName: 'Menu3',
-                  postText: 'Yet another sample post text.',
-                  imageUrl: 'assets/image/sample.jpg',
-                ),
-                PostWidget(
-                  userName: 'Menu5',
-                  postText: 'Yet another sample post text.',
-                  imageUrl: 'assets/image/sample.jpg',
-                ),
+            child: StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('products')
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                }
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return Center(child: Text('No products found.'));
+                }
 
-                /// can add any number of posts
-              ],
+                final products = snapshot.data!.docs;
+
+                return GridView.builder(
+                  padding: EdgeInsets.all(8),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
+                    childAspectRatio: 0.75,
+                  ),
+                  itemCount: products.length,
+                  itemBuilder: (context, index) {
+                    final product =
+                        products[index].data() as Map<String, dynamic>;
+
+                    return GestureDetector(
+                      onTap: () {
+                        // Navigate to OrderDetailsPage and pass product data
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                OrderDetails(product: product),
+                          ),
+                        );
+                      },
+                      child: PostWidget(product: product),
+                    );
+                  },
+                );
+              },
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class PostWidget extends StatelessWidget {
-  final String userName;
-  final String postText;
-  final String imageUrl;
-
-  const PostWidget({
-    super.key,
-    required this.userName,
-    required this.postText,
-    required this.imageUrl,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () => HelperFunction.navigate(context, OrderDetails()),
-      child: Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        margin: EdgeInsets.all(8),
-        elevation: 2,
-        child: Padding(
-          padding: EdgeInsets.all(12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              CircleAvatar(backgroundImage: AssetImage(imageUrl), radius: 60),
-              SizedBox(height: 20),
-              Text(
-                userName,
-                textAlign: TextAlign.center,
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 20),
-              Row(
-                children: [
-                  Icon(Icons.timer),
-                  Expanded(child: Text('80min 2s')),
-                  Expanded(child: Text('200৳')),
-                ],
-              ),
-              //Image.network(imageUrl, height: 100, width: 150),
-            ],
-          ),
-        ),
       ),
     );
   }

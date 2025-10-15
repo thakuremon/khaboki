@@ -1,16 +1,32 @@
 import 'all_files.dart';
 
 class OrderDetails extends StatefulWidget {
-  const OrderDetails({super.key});
+  final Map<String, dynamic> product;
+  const OrderDetails({super.key, required this.product});
 
   @override
   State<OrderDetails> createState() => _OrderDetails();
 }
 
 class _OrderDetails extends State<OrderDetails> {
-  int order_quantity = 1;
-  int item_price = 10;
-  int total_price = 10;
+  Map<String, dynamic> get product => widget.product;
+  String get productName => product['productName'] ?? 'Unknown Product';
+  String get costPerUnit => product['costPerUnit']?.toString() ?? '0';
+  DateTime get expireTime =>
+      (product['expireTime'] as Timestamp?)?.toDate() ?? DateTime.now();
+  String get photoUrl => product['photoUrl'] ?? 'assets/image/sample.jpg';
+  String get productDetails =>
+      product['productDetails'] ?? 'No details available';
+  int get availableQuantity => product['quantityAvailable'] ?? 0;
+
+  int orderQuantity = 1;
+  double totalPrice = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    totalPrice = orderQuantity * double.parse(costPerUnit);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,13 +50,13 @@ class _OrderDetails extends State<OrderDetails> {
               SizedBox(height: 20),
 
               Text(
-                'item name ',
+                productName,
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
 
               SizedBox(height: 10),
 
-              Text('product details here '),
+              Text(productDetails),
 
               SizedBox(height: 10),
 
@@ -50,8 +66,8 @@ class _OrderDetails extends State<OrderDetails> {
                   IconButton(
                     onPressed: () {
                       setState(() {
-                        if (order_quantity > 1) order_quantity--;
-                        total_price = order_quantity * item_price;
+                        if (orderQuantity > 1) orderQuantity--;
+                        totalPrice = orderQuantity * double.parse(costPerUnit);
                       });
                     },
                     icon: CircleAvatar(
@@ -61,13 +77,23 @@ class _OrderDetails extends State<OrderDetails> {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(16.0),
-                    child: Text('$order_quantity'),
+                    child: Text('$orderQuantity'),
                   ),
                   IconButton(
                     onPressed: () {
                       setState(() {
-                        order_quantity++;
-                        total_price = order_quantity * item_price;
+                        orderQuantity++;
+                        if (orderQuantity > availableQuantity) {
+                          orderQuantity = availableQuantity;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'no more product available ($availableQuantity)',
+                              ),
+                            ),
+                          );
+                        }
+                        totalPrice = orderQuantity * double.parse(costPerUnit);
                       });
                     },
                     icon: CircleAvatar(
@@ -79,7 +105,7 @@ class _OrderDetails extends State<OrderDetails> {
               ),
 
               Text(
-                'Total Price: \$$total_price',
+                'Total Price: \$$totalPrice',
                 style: TextStyle(fontSize: 20),
               ),
 
@@ -96,6 +122,7 @@ class _OrderDetails extends State<OrderDetails> {
                     borderRadius: BorderRadius.circular(6),
                   ),
                 ),
+
                 child: Text(
                   'Place Order',
                   style: TextStyle(fontSize: 20, color: Colors.white),

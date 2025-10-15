@@ -12,10 +12,14 @@ class _CreateProductPageState extends State<CreateProductPage> {
   TextEditingController detailsController = TextEditingController();
   TextEditingController priceController = TextEditingController();
   TextEditingController quantityController = TextEditingController();
-  TextEditingController imageUrlController = TextEditingController();
+
+  File? imageFile;
+  final ImagePicker picker = ImagePicker();
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = context.watch<CurrentUser>();
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Create Product'),
@@ -49,45 +53,88 @@ class _CreateProductPageState extends State<CreateProductPage> {
                 keyboardType: TextInputType.number,
               ),
               SizedBox(height: 10),
-              TextField(
-                controller: imageUrlController,
-                decoration: InputDecoration(labelText: 'Image URL'),
-              ),
+
+              // ElevatedButton.icon(
+              //   icon: Icon(Icons.photo_camera),
+              //   label: Text("Add Product Image"),
+              //   onPressed: () async {
+              //     final XFile? pickedFile = await picker.pickImage(
+              //       source: ImageSource.gallery,
+              //       imageQuality: 80,
+              //     );
+              //     if (pickedFile != null) {
+              //       setState(() {
+              //         imageFile = File(pickedFile.path);
+              //       });
+              //     }
+              //   },
+              // ),
+              //if (imageFile != null) Image.file(imageFile!, height: 150),
               SizedBox(height: 20),
+
+              ElevatedButton(
+                onPressed: () async {
+                  final photoUrl = await pickAndUploadImage(context);
+                },
+                child: const Text('Upload Image'),
+              ),
+
               ElevatedButton(
                 onPressed: () async {
                   String name = nameController.text;
                   String details = detailsController.text;
                   double? price = double.tryParse(priceController.text);
                   int? quantity = int.tryParse(quantityController.text);
-                  String imageUrl = imageUrlController.text;
+                  // String? photoUrl = imageFile != null
+                  //     ? await pickAndUploadImage(context)
+                  //     : null;
 
-                  // if (name.isNotEmpty &&
-                  //     details.isNotEmpty &&
-                  //     price != null &&
-                  //     quantity != null &&
-                  //     imageUrl.isNotEmpty) {
-                  //   await createProduct(
-                  //     name,
-                  //     details,
-                  //     price,
-                  //     quantity,
-                  //     imageUrl,
-                  //   );
-                  //   ScaffoldMessenger.of(context).showSnackBar(
-                  //     SnackBar(content: Text('Product Created Successfully')),
-                  //   );
-                  //   // Clear fields after creation
-                  //   nameController.clear();
-                  //   detailsController.clear();
-                  //   priceController.clear();
-                  //   quantityController.clear();
-                  //   imageUrlController.clear();
-                  // } else {
-                  //   ScaffoldMessenger.of(context).showSnackBar(
-                  //     SnackBar(content: Text('Please fill all fields correctly')),
-                  //   );
-                  // }
+                  if (name.isNotEmpty &&
+                      details.isNotEmpty &&
+                      price != null &&
+                      quantity != null) {
+                    try {
+                      await createProduct(
+                        vendoruId: currentUser.uid!,
+                        productName: name,
+                        produceDetails: details,
+                        costPerUnit: price,
+                        quantityAvailable: quantity,
+                        expireTime: DateTime.now().add(Duration(days: 30)),
+                        //photoUrl: photoUrl!,
+                      );
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            '$e',
+                            style: TextStyle(
+                              color: const Color.fromARGB(255, 70, 191, 33),
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Product Created Successfully')),
+                    );
+
+                    // Clear fields after creation
+                    nameController.clear();
+                    detailsController.clear();
+                    priceController.clear();
+                    quantityController.clear();
+
+                    HelperFunction.navigate(context, HomePage());
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Please fill all fields correctly'),
+                      ),
+                    );
+                  }
                 },
                 child: Text('Create Product'),
               ),

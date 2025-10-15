@@ -57,13 +57,14 @@ Future<void> placeOrder({
   });
 }
 
-Future<void> addProduct({
-  required String vendorId,
+Future<void> createProduct({
+  required String vendoruId,
   required String productName,
   required String produceDetails,
   required double costPerUnit,
+  required int quantityAvailable,
   required DateTime expireTime,
-  required String photoUrl,
+  //required String photoUrl,
 }) async {
   final db = FirebaseFirestore.instance;
   final counterRef = db.collection("counters").doc("products");
@@ -75,12 +76,13 @@ Future<void> addProduct({
 
     final productData = {
       "itemId": newId,
-      "vendorId": vendorId,
+      "vendoruId": vendoruId,
       "productName": productName,
       "productDetails": produceDetails,
       "costPerUnit": costPerUnit,
+      "quantityAvailable": quantityAvailable,
       "expireTime": Timestamp.fromDate(expireTime),
-      "photoUrl": photoUrl,
+      //"photoUrl": photoUrl,
       "createdAt": FieldValue.serverTimestamp(),
     };
 

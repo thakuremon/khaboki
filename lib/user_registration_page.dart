@@ -217,7 +217,7 @@ class _UserRegistrationPage extends State<UserRegistrationPage> {
                   }
 
                   User? user = await signUp(
-                    studentIdController.text,
+                    emailController.text,
                     passwordController.text,
                     error,
                   );
@@ -233,7 +233,7 @@ class _UserRegistrationPage extends State<UserRegistrationPage> {
                       'user',
                       user.photoURL ?? '',
                     );
-                    HelperFunction.navigate(context, HomePage());
+                    HelperFunction.navigate(context, VerifyEmailScreen());
                   } else {
                     ScaffoldMessenger.of(
                       context,
