@@ -7,6 +7,7 @@ export 'error_message.dart';
 export 'package:image_picker/image_picker.dart';
 export 'dart:async';
 export 'post_widget.dart';
+export 'time_and_date.dart';
 
 // provider
 export 'package:khaboki2/current_user.dart';
@@ -33,3 +34,5 @@ export 'vendor_registration_page.dart';
 export 'order_details.dart';
 export 'create_product.dart';
 export 'email_verification_page.dart';
+export 'user_profile2.dart';
+export 'order_history.dart';

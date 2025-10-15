@@ -25,7 +25,14 @@ class PostWidget extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              CircleAvatar(backgroundImage: AssetImage(photoUrl), radius: 60),
+              CircleAvatar(
+                radius: 50,
+                backgroundImage:
+                    (photoUrl.isNotEmpty &&
+                        Uri.tryParse(photoUrl)?.hasAbsolutePath == true)
+                    ? NetworkImage(photoUrl)
+                    : const AssetImage('assets/image/sample.jpg'),
+              ),
               SizedBox(height: 20),
               Text(
                 productName,

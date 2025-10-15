@@ -5,6 +5,7 @@ class UserProfile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currentUser = context.watch<CurrentUser>();
+    final photoUrl = currentUser.photoURL;
 
     return Scaffold(
       appBar: AppBar(
@@ -24,7 +25,9 @@ class UserProfile extends StatelessWidget {
                 SizedBox(height: 20),
                 CircleAvatar(
                   radius: 100,
-                  backgroundImage: AssetImage('assets/image/sample.jpg'),
+                  backgroundImage: photoUrl != null
+                      ? NetworkImage(photoUrl!)
+                      : AssetImage("assets/image/sample.jpg") as ImageProvider,
                 ),
                 SizedBox(height: 20),
                 Text(

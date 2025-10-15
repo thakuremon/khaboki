@@ -12,9 +12,9 @@ class _CreateProductPageState extends State<CreateProductPage> {
   TextEditingController detailsController = TextEditingController();
   TextEditingController priceController = TextEditingController();
   TextEditingController quantityController = TextEditingController();
-
-  File? imageFile;
-  final ImagePicker picker = ImagePicker();
+  TextEditingController dateTimeController = TextEditingController();
+  DateTime? selectedDateTime;
+  String? photoUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -53,46 +53,37 @@ class _CreateProductPageState extends State<CreateProductPage> {
                 keyboardType: TextInputType.number,
               ),
               SizedBox(height: 10),
-
-              // ElevatedButton.icon(
-              //   icon: Icon(Icons.photo_camera),
-              //   label: Text("Add Product Image"),
-              //   onPressed: () async {
-              //     final XFile? pickedFile = await picker.pickImage(
-              //       source: ImageSource.gallery,
-              //       imageQuality: 80,
-              //     );
-              //     if (pickedFile != null) {
-              //       setState(() {
-              //         imageFile = File(pickedFile.path);
-              //       });
-              //     }
-              //   },
-              // ),
-              //if (imageFile != null) Image.file(imageFile!, height: 150),
-              SizedBox(height: 20),
+              DateTimeInputField(
+                controller: dateTimeController,
+                onDateTimeSelected: (dt) {
+                  selectedDateTime = dt;
+                },
+              ),
+              // Image upload section
+              SizedBox(height: 10),
 
               ElevatedButton(
                 onPressed: () async {
-                  final photoUrl = await pickAndUploadImage(context);
+                  photoUrl = await pickAndUploadImage(context);
                 },
                 child: const Text('Upload Image'),
               ),
 
+              SizedBox(height: 20),
+
+              //if (imageFile != null) Image.file(imageFile!, height: 150),
               ElevatedButton(
                 onPressed: () async {
                   String name = nameController.text;
                   String details = detailsController.text;
                   double? price = double.tryParse(priceController.text);
                   int? quantity = int.tryParse(quantityController.text);
-                  // String? photoUrl = imageFile != null
-                  //     ? await pickAndUploadImage(context)
-                  //     : null;
 
                   if (name.isNotEmpty &&
                       details.isNotEmpty &&
                       price != null &&
-                      quantity != null) {
+                      quantity != null &&
+                      photoUrl != null) {
                     try {
                       await createProduct(
                         vendoruId: currentUser.uid!,
@@ -100,8 +91,8 @@ class _CreateProductPageState extends State<CreateProductPage> {
                         produceDetails: details,
                         costPerUnit: price,
                         quantityAvailable: quantity,
-                        expireTime: DateTime.now().add(Duration(days: 30)),
-                        //photoUrl: photoUrl!,
+                        expireTime: selectedDateTime!,
+                        photoUrl: photoUrl!,
                       );
                     } catch (e) {
                       ScaffoldMessenger.of(context).showSnackBar(

@@ -32,6 +32,14 @@ Widget buildDrawer(BuildContext context, CurrentUser currentUser) {
                     HelperFunction.navigate(context, CreateProductPage()),
               )
             : SizedBox.shrink(),
+        currentUser.role == 'user'
+            ? ListTile(
+                leading: Icon(Icons.history),
+                title: Text('Order History'),
+                onTap: () =>
+                    HelperFunction.navigate(context, PendingOrdersPage()),
+              )
+            : SizedBox.shrink(),
 
         ListTile(
           leading: Icon(Icons.info),

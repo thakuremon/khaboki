@@ -28,26 +28,25 @@ class _FlashScreenState extends State<FlashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset('assets/logo.jpeg', width: 150, height: 150),
+            Image.asset('assets/logo.jpeg', width: 200, height: 200),
             const SizedBox(height: 25),
 
-            const Text(
-              'KhaboKi',
-              style: TextStyle(
-                fontSize: 36,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-                letterSpacing: 1.2,
-              ),
-            ),
+            // const Text(
+            //   'KhaboKi',
+            //   style: TextStyle(
+            //     fontSize: 36,
+            //     fontWeight: FontWeight.bold,
+            //     color: Colors.black87,
+            //     letterSpacing: 1.2,
+            //   ),
+            // ),
 
-            const SizedBox(height: 8),
+            // const SizedBox(height: 8),
 
-            const Text(
-              'Smart Food, Fast',
-              style: TextStyle(fontSize: 16, color: Colors.grey),
-            ),
-
+            // const Text(
+            //   'Smart Food, Fast',
+            //   style: TextStyle(fontSize: 16, color: Colors.grey),
+            // ),
             const SizedBox(height: 40),
 
             const CircularProgressIndicator(

@@ -182,7 +182,7 @@ class _LoginPage extends State<LoginPage> {
                                   ),
 
                                   child: Text(
-                                    'Create new account',
+                                    'Create user account',
                                     style: TextStyle(color: Colors.white),
                                   ),
                                 ),
@@ -204,7 +204,7 @@ class _LoginPage extends State<LoginPage> {
                                 padding: const EdgeInsets.all(16.0),
                                 child: TextField(
                                   controller: vendorEmail,
-                                  keyboardType: TextInputType.number,
+                                  keyboardType: TextInputType.text,
                                   decoration: InputDecoration(
                                     prefixIcon: Icon(Icons.phone),
                                     labelText: 'email',
@@ -224,6 +224,7 @@ class _LoginPage extends State<LoginPage> {
 
                                     border: OutlineInputBorder(),
                                   ),
+                                  obscureText: true,
                                 ),
                               ),
 
@@ -278,7 +279,7 @@ class _LoginPage extends State<LoginPage> {
                                   ),
 
                                   child: Text(
-                                    'Create new account',
+                                    'Create vendor account',
                                     style: TextStyle(color: Colors.white),
                                   ),
                                 ),

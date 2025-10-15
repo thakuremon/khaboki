@@ -20,14 +20,15 @@ Future<void> createUserProfile(
 }
 
 Future<void> placeOrder({
-  required String vendorId,
-  required String customerId,
+  required String vendoruId,
+  required String customeruId,
   required String productName,
   required String productPicture,
   required String productDetails,
   required int productCount,
   required double totalCost,
   required DateTime expireTime,
+  required String orderStatus,
 }) async {
   final db = FirebaseFirestore.instance;
   final counterRef = db.collection("counters").doc("orders");
@@ -39,8 +40,8 @@ Future<void> placeOrder({
 
     final orderData = {
       "orderId": newId,
-      "vendorId": vendorId,
-      "customerId": customerId,
+      "vendoruId": vendoruId,
+      "customeruId": customeruId,
       "productName": productName,
       "productPicture": productPicture,
       "productDetails": productDetails,
@@ -48,6 +49,7 @@ Future<void> placeOrder({
       "totalCost": totalCost,
       "expireTime": Timestamp.fromDate(expireTime),
       "createdAt": FieldValue.serverTimestamp(),
+      "status": orderStatus,
     };
 
     final orderRef = db.collection("orders").doc(newId.toString());
@@ -64,7 +66,7 @@ Future<void> createProduct({
   required double costPerUnit,
   required int quantityAvailable,
   required DateTime expireTime,
-  //required String photoUrl,
+  required String photoUrl,
 }) async {
   final db = FirebaseFirestore.instance;
   final counterRef = db.collection("counters").doc("products");
@@ -82,7 +84,7 @@ Future<void> createProduct({
       "costPerUnit": costPerUnit,
       "quantityAvailable": quantityAvailable,
       "expireTime": Timestamp.fromDate(expireTime),
-      //"photoUrl": photoUrl,
+      "photoUrl": photoUrl,
       "createdAt": FieldValue.serverTimestamp(),
     };
 
@@ -96,7 +98,7 @@ Future<void> createProduct({
 Future<List<Map<String, dynamic>>> getProductsByVendor(User user) async {
   final querySnapshot = await FirebaseFirestore.instance
       .collection('products')
-      .where('vendorId', isEqualTo: user.uid)
+      .where('vendoruId', isEqualTo: user.uid)
       .get();
 
   return querySnapshot.docs
@@ -107,7 +109,7 @@ Future<List<Map<String, dynamic>>> getProductsByVendor(User user) async {
 Future<List<Map<String, dynamic>>> getOrdersByCustomer(User user) async {
   final querySnapshot = await FirebaseFirestore.instance
       .collection('orders')
-      .where('customerId', isEqualTo: user.uid)
+      .where('customeruId', isEqualTo: user.uid)
       .get();
 
   return querySnapshot.docs
@@ -118,10 +120,21 @@ Future<List<Map<String, dynamic>>> getOrdersByCustomer(User user) async {
 Future<List<Map<String, dynamic>>> getOrdersByVendor(User user) async {
   final querySnapshot = await FirebaseFirestore.instance
       .collection('orders')
-      .where('vendorId', isEqualTo: user.uid)
+      .where('vendoruId', isEqualTo: user.uid)
       .get();
 
   return querySnapshot.docs
       .map((doc) => {'id': doc.id, ...doc.data()})
       .toList();
+}
+
+Future<void> updateOrderStatus(String orderId) async {
+  try {
+    await FirebaseFirestore.instance.collection('orders').doc(orderId).update({
+      'status': 'completed',
+    });
+  } catch (e) {
+    debugPrint("Error updating order status: $e");
+    rethrow;
+  }
 }

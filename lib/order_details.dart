@@ -30,6 +30,7 @@ class _OrderDetails extends State<OrderDetails> {
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = context.watch<CurrentUser>();
     return Scaffold(
       appBar: AppBar(
         title: Text('Order Details'),
@@ -40,96 +41,127 @@ class _OrderDetails extends State<OrderDetails> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Image.asset('assets/image/sample.jpg'),
-              ),
-
-              SizedBox(height: 20),
-
-              Text(
-                productName,
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-
-              SizedBox(height: 10),
-
-              Text(productDetails),
-
-              SizedBox(height: 10),
-
-              Row(
-                children: [
-                  Text('quantity:'),
-                  IconButton(
-                    onPressed: () {
-                      setState(() {
-                        if (orderQuantity > 1) orderQuantity--;
-                        totalPrice = orderQuantity * double.parse(costPerUnit);
-                      });
-                    },
-                    icon: CircleAvatar(
-                      backgroundColor: Colors.red,
-                      child: Icon(Icons.remove, color: Colors.white),
+          child: currentUser.role == 'user'
+              ? Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Image.network(photoUrl),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Text('$orderQuantity'),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      setState(() {
-                        orderQuantity++;
-                        if (orderQuantity > availableQuantity) {
-                          orderQuantity = availableQuantity;
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                'no more product available ($availableQuantity)',
+
+                    SizedBox(height: 20),
+
+                    Text(
+                      productName,
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+
+                    SizedBox(height: 10),
+
+                    Text(productDetails),
+
+                    SizedBox(height: 10),
+
+                    Row(
+                      children: [
+                        Text('quantity:'),
+                        IconButton(
+                          onPressed: () {
+                            setState(() {
+                              if (orderQuantity > 1) orderQuantity--;
+                              totalPrice =
+                                  orderQuantity * double.parse(costPerUnit);
+                            });
+                          },
+                          icon: CircleAvatar(
+                            backgroundColor: Colors.red,
+                            child: Icon(Icons.remove, color: Colors.white),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text('$orderQuantity'),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            setState(() {
+                              orderQuantity++;
+                              if (orderQuantity > availableQuantity) {
+                                orderQuantity = availableQuantity;
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      'no more product available ($availableQuantity)',
+                                    ),
+                                  ),
+                                );
+                              }
+                              totalPrice =
+                                  orderQuantity * double.parse(costPerUnit);
+                            });
+                          },
+                          icon: CircleAvatar(
+                            backgroundColor: Colors.red,
+                            child: Icon(Icons.add, color: Colors.white),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    Text(
+                      'Total Price: \$$totalPrice',
+                      style: TextStyle(fontSize: 20),
+                    ),
+
+                    SizedBox(height: 50),
+
+                    ElevatedButton(
+                      onPressed: () {
+                        placeOrder(
+                          vendoruId: product['vendoruId'],
+                          customeruId: currentUser.uid!,
+                          productName: productName,
+                          productPicture: photoUrl,
+                          productDetails: productDetails,
+                          productCount: orderQuantity,
+                          totalCost: totalPrice,
+                          expireTime: expireTime,
+                          orderStatus: 'pending',
+                        );
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              'Order Placed succesfully',
+                              style: TextStyle(
+                                color: const Color.fromARGB(255, 70, 191, 33),
+                                fontSize: 14,
                               ),
                             ),
-                          );
-                        }
-                        totalPrice = orderQuantity * double.parse(costPerUnit);
-                      });
-                    },
-                    icon: CircleAvatar(
-                      backgroundColor: Colors.red,
-                      child: Icon(Icons.add, color: Colors.white),
+                          ),
+                        );
+
+                        HelperFunction.navigate(context, HomePage());
+                      },
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: Size(double.infinity, 50),
+                        backgroundColor: Colors.teal,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                      ),
+
+                      child: Text(
+                        'Place Order',
+                        style: TextStyle(fontSize: 20, color: Colors.white),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-
-              Text(
-                'Total Price: \$$totalPrice',
-                style: TextStyle(fontSize: 20),
-              ),
-
-              SizedBox(height: 50),
-
-              ElevatedButton(
-                onPressed: () {
-                  // Handle order confirmation
-                },
-                style: ElevatedButton.styleFrom(
-                  minimumSize: Size(double.infinity, 50),
-                  backgroundColor: Colors.teal,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                ),
-
-                child: Text(
-                  'Place Order',
-                  style: TextStyle(fontSize: 20, color: Colors.white),
-                ),
-              ),
-            ],
-          ),
+                  ],
+                )
+              : SizedBox.shrink(),
         ),
       ),
     );

@@ -200,8 +200,8 @@ class _VendorRegistrationPage extends State<VendorRegistrationPage> {
                       user,
                       nameController.text,
                       '',
-                      phoneController.text,
                       emailController.text,
+                      phoneController.text,
                       'vendor',
                       user.photoURL ?? '',
                     );
