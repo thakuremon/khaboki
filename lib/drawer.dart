@@ -1,14 +1,24 @@
 import 'all_files.dart';
 
 Widget buildDrawer(BuildContext context, CurrentUser currentUser) {
+  final currentUser = context.watch<CurrentUser>();
+
   return Drawer(
     child: ListView(
       children: [
         DrawerHeader(
           decoration: BoxDecoration(color: Colors.teal),
-          child: Text(
-            'Menu',
-            style: TextStyle(fontSize: 24, color: Colors.white),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Menu', style: TextStyle(fontSize: 24, color: Colors.white)),
+              SizedBox(height: 20),
+              Text(
+                '${currentUser.displayName ?? 'Guest'}',
+                style: TextStyle(fontSize: 18, color: Colors.white),
+              ),
+              Text('${currentUser.role ?? 'guest'}'),
+            ],
           ),
         ),
 

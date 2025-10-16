@@ -53,6 +53,7 @@ class _CreateProductPageState extends State<CreateProductPage> {
                 keyboardType: TextInputType.number,
               ),
               SizedBox(height: 10),
+
               DateTimeInputField(
                 controller: dateTimeController,
                 onDateTimeSelected: (dt) {
@@ -83,7 +84,8 @@ class _CreateProductPageState extends State<CreateProductPage> {
                       details.isNotEmpty &&
                       price != null &&
                       quantity != null &&
-                      photoUrl != null) {
+                      photoUrl != null &&
+                      selectedDateTime != null) {
                     try {
                       await createProduct(
                         vendoruId: currentUser.uid!,

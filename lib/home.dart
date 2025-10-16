@@ -35,10 +35,13 @@ class HomePage extends StatelessWidget {
               ),
             ),
           ),
+
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('products')
+                  .where('expireTime', isGreaterThan: Timestamp.now())
+                  //.where('quantityAvailable', isGreaterThan: 0)
                   .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -48,7 +51,11 @@ class HomePage extends StatelessWidget {
                   return Center(child: Text('No products found.'));
                 }
 
-                final products = snapshot.data!.docs;
+                final products = snapshot.data!.docs.where((d) {
+                  final data = d.data() as Map<String, dynamic>;
+                  final q = data['quantityAvailable'] ?? 0;
+                  return q is int ? q > 0 : (q is num ? q > 0 : false);
+                }).toList();
 
                 return GridView.builder(
                   padding: EdgeInsets.all(8),

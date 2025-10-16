@@ -11,13 +11,15 @@ class OrderDetails extends StatefulWidget {
 class _OrderDetails extends State<OrderDetails> {
   Map<String, dynamic> get product => widget.product;
   String get productName => product['productName'] ?? 'Unknown Product';
+  String get productId => product['itemId']?.toString() ?? '0';
   String get costPerUnit => product['costPerUnit']?.toString() ?? '0';
-  DateTime get expireTime =>
-      (product['expireTime'] as Timestamp?)?.toDate() ?? DateTime.now();
+  DateTime get expireTime => product['expireTime']?.toDate() ?? DateTime.now();
   String get photoUrl => product['photoUrl'] ?? 'assets/image/sample.jpg';
   String get productDetails =>
       product['productDetails'] ?? 'No details available';
   int get availableQuantity => product['quantityAvailable'] ?? 0;
+  String get vendorId => product['vendoruId'] ?? 'Unknown Vendor';
+  String? vendorName;
 
   int orderQuantity = 1;
   double totalPrice = 0;
@@ -25,7 +27,13 @@ class _OrderDetails extends State<OrderDetails> {
   @override
   void initState() {
     super.initState();
+    getVendorName();
     totalPrice = orderQuantity * double.parse(costPerUnit);
+  }
+
+  void getVendorName() async {
+    vendorName = await getUserNameFromID(vendorId);
+    setState(() {});
   }
 
   @override
@@ -41,127 +49,148 @@ class _OrderDetails extends State<OrderDetails> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
-          child: currentUser.role == 'user'
-              ? Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Image.network(photoUrl),
-                    ),
+          child: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Image.network(photoUrl),
+              ),
 
-                    SizedBox(height: 20),
+              Text('vendor: ${vendorName ?? 'Loading...'}'),
 
-                    Text(
-                      productName,
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+              SizedBox(height: 20),
 
-                    SizedBox(height: 10),
+              Text(
+                'Product Name: $productName',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
 
-                    Text(productDetails),
+              SizedBox(height: 10),
 
-                    SizedBox(height: 10),
+              Text('Details: $productDetails'),
 
-                    Row(
+              SizedBox(height: 10),
+
+              Text(
+                'Product available until : ${expireTime.toLocal().toString()}',
+              ),
+
+              SizedBox(height: 10),
+
+              currentUser.role == 'user'
+                  ? Column(
                       children: [
-                        Text('quantity:'),
-                        IconButton(
-                          onPressed: () {
-                            setState(() {
-                              if (orderQuantity > 1) orderQuantity--;
-                              totalPrice =
-                                  orderQuantity * double.parse(costPerUnit);
-                            });
-                          },
-                          icon: CircleAvatar(
-                            backgroundColor: Colors.red,
-                            child: Icon(Icons.remove, color: Colors.white),
-                          ),
+                        Row(
+                          children: [
+                            Text('quantity:'),
+                            IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  if (orderQuantity > 1) orderQuantity--;
+                                  totalPrice =
+                                      orderQuantity * double.parse(costPerUnit);
+                                });
+                              },
+                              icon: CircleAvatar(
+                                backgroundColor: Colors.red,
+                                child: Icon(Icons.remove, color: Colors.white),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Text('$orderQuantity'),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  orderQuantity++;
+                                  if (orderQuantity > availableQuantity) {
+                                    orderQuantity = availableQuantity;
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          'no more product available ($availableQuantity)',
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                  totalPrice =
+                                      orderQuantity * double.parse(costPerUnit);
+                                });
+                              },
+                              icon: CircleAvatar(
+                                backgroundColor: Colors.red,
+                                child: Icon(Icons.add, color: Colors.white),
+                              ),
+                            ),
+                          ],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Text('$orderQuantity'),
+
+                        SizedBox(height: 10),
+
+                        Text(
+                          'Total Price: \$$totalPrice',
+                          style: TextStyle(fontSize: 20),
                         ),
-                        IconButton(
+
+                        SizedBox(height: 50),
+
+                        ElevatedButton(
                           onPressed: () {
-                            setState(() {
-                              orderQuantity++;
-                              if (orderQuantity > availableQuantity) {
-                                orderQuantity = availableQuantity;
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      'no more product available ($availableQuantity)',
+                            placeOrder(
+                              vendoruId: product['vendoruId'],
+                              customeruId: currentUser.uid!,
+                              productName: productName,
+                              productPicture: photoUrl,
+                              productDetails: productDetails,
+                              productCount: orderQuantity,
+                              totalCost: totalPrice,
+                              expireTime: expireTime,
+                              orderStatus: 'pending',
+                            );
+
+                            updateProductQuantity(
+                              productId,
+                              availableQuantity - orderQuantity,
+                            );
+
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  'Order Placed succesfully',
+                                  style: TextStyle(
+                                    color: const Color.fromARGB(
+                                      255,
+                                      70,
+                                      191,
+                                      33,
                                     ),
+                                    fontSize: 14,
                                   ),
-                                );
-                              }
-                              totalPrice =
-                                  orderQuantity * double.parse(costPerUnit);
-                            });
+                                ),
+                              ),
+                            );
+
+                            HelperFunction.navigate(context, HomePage());
                           },
-                          icon: CircleAvatar(
-                            backgroundColor: Colors.red,
-                            child: Icon(Icons.add, color: Colors.white),
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: Size(double.infinity, 50),
+                            backgroundColor: Colors.teal,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                          ),
+
+                          child: Text(
+                            'Place Order',
+                            style: TextStyle(fontSize: 20, color: Colors.white),
                           ),
                         ),
                       ],
-                    ),
-
-                    Text(
-                      'Total Price: \$$totalPrice',
-                      style: TextStyle(fontSize: 20),
-                    ),
-
-                    SizedBox(height: 50),
-
-                    ElevatedButton(
-                      onPressed: () {
-                        placeOrder(
-                          vendoruId: product['vendoruId'],
-                          customeruId: currentUser.uid!,
-                          productName: productName,
-                          productPicture: photoUrl,
-                          productDetails: productDetails,
-                          productCount: orderQuantity,
-                          totalCost: totalPrice,
-                          expireTime: expireTime,
-                          orderStatus: 'pending',
-                        );
-
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              'Order Placed succesfully',
-                              style: TextStyle(
-                                color: const Color.fromARGB(255, 70, 191, 33),
-                                fontSize: 14,
-                              ),
-                            ),
-                          ),
-                        );
-
-                        HelperFunction.navigate(context, HomePage());
-                      },
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: Size(double.infinity, 50),
-                        backgroundColor: Colors.teal,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                      ),
-
-                      child: Text(
-                        'Place Order',
-                        style: TextStyle(fontSize: 20, color: Colors.white),
-                      ),
-                    ),
-                  ],
-                )
-              : SizedBox.shrink(),
+                    )
+                  : SizedBox.shrink(),
+            ],
+          ),
         ),
       ),
     );

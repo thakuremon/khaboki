@@ -138,3 +138,18 @@ Future<void> updateOrderStatus(String orderId) async {
     rethrow;
   }
 }
+
+Future<void> updateProductQuantity(String productId, int newQuantity) async {
+  await FirebaseFirestore.instance.collection('products').doc(productId).update(
+    {'quantityAvailable': newQuantity},
+  );
+}
+
+Future<String> getUserNameFromID(String uId) async {
+  final querySnapshot = await FirebaseFirestore.instance
+      .collection('users')
+      .doc(uId)
+      .get();
+
+  return querySnapshot['name'] ?? 'Unknown User';
+}

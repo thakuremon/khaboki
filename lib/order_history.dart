@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'all_files.dart';
 
 class PendingOrdersPage extends StatefulWidget {
@@ -138,7 +137,7 @@ class _PendingOrdersPageState extends State<PendingOrdersPage> {
                     final name = order["productName"] ?? "Unnamed";
                     final productDetails = order["productDetails"] ?? '';
                     final cost = order["totalCost"]?.toString() ?? "N/A";
-                    final expire = order["expireTime"]?.toString() ?? "Unknown";
+                    //final expire = order["expireTime"]?.toString() ?? "Unknown";
                     final status = order["status"] ?? "pending";
 
                     return Card(
