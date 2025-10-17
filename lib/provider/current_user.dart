@@ -1,4 +1,4 @@
-import 'all_files.dart';
+import '../all_files.dart';
 
 class CurrentUser extends ChangeNotifier {
   User? _user; // FirebaseAuth user

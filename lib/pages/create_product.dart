@@ -1,4 +1,4 @@
-import 'all_files.dart';
+import '../all_files.dart';
 
 class CreateProductPage extends StatefulWidget {
   const CreateProductPage({super.key});

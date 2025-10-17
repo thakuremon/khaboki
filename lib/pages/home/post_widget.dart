@@ -1,4 +1,4 @@
-import 'all_files.dart';
+import '../../all_files.dart';
 
 class PostWidget extends StatelessWidget {
   final Map<String, dynamic> product;

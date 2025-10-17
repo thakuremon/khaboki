@@ -1,4 +1,5 @@
 import 'all_files.dart';
+import 'pages/my_products_page.dart';
 
 Widget buildDrawer(BuildContext context, CurrentUser currentUser) {
   final currentUser = context.watch<CurrentUser>();
@@ -42,27 +43,29 @@ Widget buildDrawer(BuildContext context, CurrentUser currentUser) {
                     HelperFunction.navigate(context, CreateProductPage()),
               )
             : SizedBox.shrink(),
-        currentUser.role == 'user'
+        ListTile(
+          leading: Icon(Icons.history),
+          title: Text('Order History'),
+          onTap: () => HelperFunction.navigate(context, PendingOrdersPage()),
+        ),
+
+        currentUser.role == 'vendor'
             ? ListTile(
-                leading: Icon(Icons.history),
-                title: Text('Order History'),
-                onTap: () =>
-                    HelperFunction.navigate(context, PendingOrdersPage()),
+                leading: Icon(Icons.list),
+                title: Text('My Products'),
+                onTap: () => HelperFunction.navigate(context, MyProductsPage()),
               )
             : SizedBox.shrink(),
 
         ListTile(
           leading: Icon(Icons.info),
           title: Text('about us'),
-          onTap: () {
-            // Navigate to settings page
-          },
+          onTap: () {},
         ),
         ListTile(
           leading: Icon(Icons.logout),
           title: Text('Logout'),
           onTap: () => HelperFunction.navigate(context, LoginPage()),
-          // Navigate to settings pag,
         ),
       ],
     ),

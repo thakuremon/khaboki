@@ -1,4 +1,4 @@
-import 'all_files.dart';
+import '../all_files.dart';
 
 class PendingOrdersPage extends StatefulWidget {
   const PendingOrdersPage({super.key});
@@ -55,6 +55,7 @@ class _PendingOrdersPageState extends State<PendingOrdersPage> {
                   ),
                 ),
                 const SizedBox(width: 10),
+
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () => setState(() => showPending = false),
@@ -137,6 +138,7 @@ class _PendingOrdersPageState extends State<PendingOrdersPage> {
                     final name = order["productName"] ?? "Unnamed";
                     final productDetails = order["productDetails"] ?? '';
                     final cost = order["totalCost"]?.toString() ?? "N/A";
+                    final productCount = order['productCount'] ?? 0;
                     //final expire = order["expireTime"]?.toString() ?? "Unknown";
                     final status = order["status"] ?? "pending";
 
@@ -175,12 +177,96 @@ class _PendingOrdersPageState extends State<PendingOrdersPage> {
                               ),
                               subtitle: Padding(
                                 padding: const EdgeInsets.only(top: 4),
-                                child: Text(
-                                  "Product details: $productDetails\nStatus: ${status.toString().toUpperCase()}",
-                                  style: const TextStyle(
-                                    fontSize: 13,
-                                    color: Colors.grey,
-                                  ),
+
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+
+                                  children: [
+                                    Builder(
+                                      builder: (context) {
+                                        final userId =
+                                            currentUser.role == 'user'
+                                            ? order['customeruId']
+                                            : order['vendoruId'];
+
+                                        if (userId == null ||
+                                            userId.toString().isEmpty) {
+                                          return const SizedBox.shrink();
+                                        }
+
+                                        return FutureBuilder<List<String?>>(
+                                          future: Future.wait<String?>([
+                                            getUserNameFromID(
+                                              userId.toString(),
+                                            ),
+                                            getUserPhoneFromID(
+                                              userId.toString(),
+                                            ),
+                                          ]),
+                                          builder: (context, snap) {
+                                            if (snap.connectionState ==
+                                                ConnectionState.waiting) {
+                                              return const Padding(
+                                                padding: EdgeInsets.only(
+                                                  bottom: 6.0,
+                                                ),
+                                                child: Text(
+                                                  'Loading user...',
+                                                  style: TextStyle(
+                                                    fontSize: 13,
+                                                    color: Colors.grey,
+                                                  ),
+                                                ),
+                                              );
+                                            }
+
+                                            final name =
+                                                (snap.data != null &&
+                                                    snap.data!.isNotEmpty)
+                                                ? snap.data![0] ?? 'Unknown'
+                                                : 'Unknown';
+                                            final phone =
+                                                (snap.data != null &&
+                                                    snap.data!.length > 1)
+                                                ? snap.data![1] ?? ''
+                                                : '';
+                                            return Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'User: $name',
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+
+                                                if (phone.isNotEmpty)
+                                                  Text(
+                                                    'Phone: $phone',
+                                                    style: const TextStyle(
+                                                      fontSize: 13,
+                                                      color: Colors.grey,
+                                                    ),
+                                                  ),
+                                                const SizedBox(height: 6),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      },
+                                    ),
+
+                                    Text('Quantity: $productCount'),
+                                    Text(
+                                      "Product details: $productDetails\nStatus: ${status.toString().toUpperCase()}",
+                                      style: const TextStyle(
+                                        fontSize: 13,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                               trailing: Text(
@@ -193,8 +279,9 @@ class _PendingOrdersPageState extends State<PendingOrdersPage> {
                               ),
                             ),
 
-                            // ✅ “Order Completed?” button
-                            if (status.toLowerCase() == 'pending')
+                            // order completed button
+                            if (status.toLowerCase() == 'pending' &&
+                                currentUser.role == 'user')
                               Padding(
                                 padding: const EdgeInsets.only(
                                   left: 16,

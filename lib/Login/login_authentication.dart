@@ -1,4 +1,4 @@
-import 'all_files.dart';
+import '../all_files.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 

@@ -1,15 +1,14 @@
-import 'all_files.dart';
+import '../all_files.dart';
 
-class UserRegistrationPage extends StatefulWidget {
-  const UserRegistrationPage({super.key});
+class VendorRegistrationPage extends StatefulWidget {
+  const VendorRegistrationPage({super.key});
 
   @override
-  State<UserRegistrationPage> createState() => _UserRegistrationPage();
+  State<VendorRegistrationPage> createState() => _VendorRegistrationPage();
 }
 
-class _UserRegistrationPage extends State<UserRegistrationPage> {
+class _VendorRegistrationPage extends State<VendorRegistrationPage> {
   TextEditingController nameController = TextEditingController();
-  TextEditingController studentIdController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -17,7 +16,6 @@ class _UserRegistrationPage extends State<UserRegistrationPage> {
   ErrorMessage error = ErrorMessage();
 
   ErrorMessage nameError = ErrorMessage();
-  ErrorMessage studentIdError = ErrorMessage();
   ErrorMessage phoneError = ErrorMessage();
   ErrorMessage emailError = ErrorMessage();
   ErrorMessage passwordError = ErrorMessage();
@@ -25,7 +23,6 @@ class _UserRegistrationPage extends State<UserRegistrationPage> {
 
   bool get isFormValid {
     return nameError.message == null &&
-        studentIdError.message == null &&
         phoneError.message == null &&
         emailError.message == null &&
         passwordError.message == null &&
@@ -43,19 +40,6 @@ class _UserRegistrationPage extends State<UserRegistrationPage> {
           nameError.message = "Enter your name";
         } else {
           nameError.message = null;
-        }
-      });
-    });
-
-    studentIdController.addListener(() {
-      final text = studentIdController.text;
-      setState(() {
-        if (text.isEmpty) {
-          studentIdError.message = "id contains only digits";
-        } else if (!KhabokiRegex.validUserId(text)) {
-          studentIdError.message = 'invalid id format';
-        } else {
-          studentIdError.message = null;
         }
       });
     });
@@ -138,18 +122,6 @@ class _UserRegistrationPage extends State<UserRegistrationPage> {
 
               SizedBox(height: 20),
 
-              TextFormField(
-                controller: studentIdController,
-                decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.badge),
-                  labelText: 'student ID',
-                  border: OutlineInputBorder(),
-                  errorText: studentIdError.message,
-                ),
-              ),
-
-              SizedBox(height: 20),
-
               TextField(
                 controller: phoneController,
                 decoration: InputDecoration(
@@ -227,10 +199,10 @@ class _UserRegistrationPage extends State<UserRegistrationPage> {
                     createUserProfile(
                       user,
                       nameController.text,
-                      studentIdController.text,
+                      '',
                       emailController.text,
                       phoneController.text,
-                      'user',
+                      'vendor',
                       user.photoURL ?? '',
                     );
                     HelperFunction.navigate(context, VerifyEmailScreen());

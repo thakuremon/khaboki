@@ -1,4 +1,4 @@
-import 'all_files.dart';
+import '../all_files.dart';
 
 class VerifyEmailScreen extends StatefulWidget {
   const VerifyEmailScreen({Key? key}) : super(key: key);

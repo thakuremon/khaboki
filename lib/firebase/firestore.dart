@@ -1,4 +1,4 @@
-import 'all_files.dart';
+import '../all_files.dart';
 
 Future<void> createUserProfile(
   User user,
@@ -95,6 +95,17 @@ Future<void> createProduct({
   });
 }
 
+Future<void> updateProduct(String productId, Map<String, dynamic> data) async {
+  await FirebaseFirestore.instance
+      .collection('products')
+      .doc(productId)
+      .update(data);
+}
+
+void deleteProduct(String productId) {
+  FirebaseFirestore.instance.collection('products').doc(productId).delete();
+}
+
 Future<List<Map<String, dynamic>>> getProductsByVendor(User user) async {
   final querySnapshot = await FirebaseFirestore.instance
       .collection('products')
@@ -152,4 +163,12 @@ Future<String> getUserNameFromID(String uId) async {
       .get();
 
   return querySnapshot['name'] ?? 'Unknown User';
+}
+
+Future<String> getUserPhoneFromID(String uId) async {
+  final querySnapshot = await FirebaseFirestore.instance
+      .collection('users')
+      .doc(uId)
+      .get();
+  return querySnapshot['phone'] ?? '00000000000';
 }

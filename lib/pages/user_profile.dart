@@ -1,4 +1,4 @@
-import 'all_files.dart';
+import '../all_files.dart';
 
 class UserProfile extends StatelessWidget {
   const UserProfile({super.key});

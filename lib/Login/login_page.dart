@@ -1,4 +1,4 @@
-import 'all_files.dart';
+import '../all_files.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

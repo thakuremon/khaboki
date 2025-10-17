@@ -1,4 +1,4 @@
-import 'all_files.dart';
+import '../all_files.dart';
 
 Future<String?> uploadFile(File file, String path) async {
   try {

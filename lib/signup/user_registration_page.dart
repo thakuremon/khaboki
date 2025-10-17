@@ -1,14 +1,15 @@
-import 'all_files.dart';
+import '../all_files.dart';
 
-class VendorRegistrationPage extends StatefulWidget {
-  const VendorRegistrationPage({super.key});
+class UserRegistrationPage extends StatefulWidget {
+  const UserRegistrationPage({super.key});
 
   @override
-  State<VendorRegistrationPage> createState() => _VendorRegistrationPage();
+  State<UserRegistrationPage> createState() => _UserRegistrationPage();
 }
 
-class _VendorRegistrationPage extends State<VendorRegistrationPage> {
+class _UserRegistrationPage extends State<UserRegistrationPage> {
   TextEditingController nameController = TextEditingController();
+  TextEditingController studentIdController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -16,6 +17,7 @@ class _VendorRegistrationPage extends State<VendorRegistrationPage> {
   ErrorMessage error = ErrorMessage();
 
   ErrorMessage nameError = ErrorMessage();
+  ErrorMessage studentIdError = ErrorMessage();
   ErrorMessage phoneError = ErrorMessage();
   ErrorMessage emailError = ErrorMessage();
   ErrorMessage passwordError = ErrorMessage();
@@ -23,6 +25,7 @@ class _VendorRegistrationPage extends State<VendorRegistrationPage> {
 
   bool get isFormValid {
     return nameError.message == null &&
+        studentIdError.message == null &&
         phoneError.message == null &&
         emailError.message == null &&
         passwordError.message == null &&
@@ -40,6 +43,19 @@ class _VendorRegistrationPage extends State<VendorRegistrationPage> {
           nameError.message = "Enter your name";
         } else {
           nameError.message = null;
+        }
+      });
+    });
+
+    studentIdController.addListener(() {
+      final text = studentIdController.text;
+      setState(() {
+        if (text.isEmpty) {
+          studentIdError.message = "id contains only digits";
+        } else if (!KhabokiRegex.validUserId(text)) {
+          studentIdError.message = 'invalid id format';
+        } else {
+          studentIdError.message = null;
         }
       });
     });
@@ -122,6 +138,18 @@ class _VendorRegistrationPage extends State<VendorRegistrationPage> {
 
               SizedBox(height: 20),
 
+              TextFormField(
+                controller: studentIdController,
+                decoration: InputDecoration(
+                  prefixIcon: Icon(Icons.badge),
+                  labelText: 'student ID',
+                  border: OutlineInputBorder(),
+                  errorText: studentIdError.message,
+                ),
+              ),
+
+              SizedBox(height: 20),
+
               TextField(
                 controller: phoneController,
                 decoration: InputDecoration(
@@ -199,10 +227,10 @@ class _VendorRegistrationPage extends State<VendorRegistrationPage> {
                     createUserProfile(
                       user,
                       nameController.text,
-                      '',
+                      studentIdController.text,
                       emailController.text,
                       phoneController.text,
-                      'vendor',
+                      'user',
                       user.photoURL ?? '',
                     );
                     HelperFunction.navigate(context, VerifyEmailScreen());

@@ -1,4 +1,4 @@
-import 'all_files.dart';
+import '../../all_files.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
