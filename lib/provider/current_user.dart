@@ -12,7 +12,7 @@ class CurrentUser extends ChangeNotifier {
   String? get phone => _profile?['phone'];
   String? get uid => _user?.uid;
   String? get email => _profile?['mail'];
-  String? get photoURL => _user?.photoURL;
+  String? get photoURL => profile?['photoUrl'];
   String? get role => _profile?['role'];
   bool get isEmailVerified => _user?.emailVerified ?? false;
   bool get isLoggedIn => _user != null;

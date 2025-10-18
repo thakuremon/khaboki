@@ -14,6 +14,7 @@ class _VendorRegistrationPage extends State<VendorRegistrationPage> {
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
   ErrorMessage error = ErrorMessage();
+  String? photoUrl;
 
   ErrorMessage nameError = ErrorMessage();
   ErrorMessage phoneError = ErrorMessage();
@@ -175,6 +176,16 @@ class _VendorRegistrationPage extends State<VendorRegistrationPage> {
 
               ElevatedButton(
                 onPressed: () async {
+                  photoUrl = await pickAndUploadImage(context);
+                },
+                child: const Text('Upload Image'),
+              ),
+
+              SizedBox(height: 20),
+
+              ElevatedButton(
+                /// form validation
+                onPressed: () async {
                   if (passwordController.text !=
                           confirmPasswordController.text ||
                       !isFormValid) {
@@ -203,7 +214,7 @@ class _VendorRegistrationPage extends State<VendorRegistrationPage> {
                       emailController.text,
                       phoneController.text,
                       'vendor',
-                      user.photoURL ?? '',
+                      photoUrl ?? '',
                     );
                     HelperFunction.navigate(context, VerifyEmailScreen());
                   } else {

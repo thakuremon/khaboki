@@ -185,7 +185,7 @@ class _PendingOrdersPageState extends State<PendingOrdersPage> {
                                     Builder(
                                       builder: (context) {
                                         final userId =
-                                            currentUser.role == 'user'
+                                            currentUser.role != 'user'
                                             ? order['customeruId']
                                             : order['vendoruId'];
 
@@ -203,6 +203,7 @@ class _PendingOrdersPageState extends State<PendingOrdersPage> {
                                               userId.toString(),
                                             ),
                                           ]),
+
                                           builder: (context, snap) {
                                             if (snap.connectionState ==
                                                 ConnectionState.waiting) {

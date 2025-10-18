@@ -3,7 +3,9 @@ class KhabokiRegex {
 
   static final RegExp phone = RegExp(r'^\d{11}$');
 
-  static final password = RegExp(r'^[a-zA-Z0-9#@!%&\.]{8,}$');
+  static final password = RegExp(
+    r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#\$&*~]).{8,}$',
+  );
 
   static final RegExp numeric = RegExp(r'^[0-9]+$');
 

@@ -6,7 +6,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Supabase.initialize(
-    url: 'https://lfqtzbxrozgwrzkslvfd.supabase.co', // from dashboard
+    url: 'https://lfqtzbxrozgwrzkslvfd.supabase.co',
     anonKey:
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxmcXR6Ynhyb3pnd3J6a3NsdmZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAzNzcxODksImV4cCI6MjA3NTk1MzE4OX0.el8A4b34RRBHPJil6Wb4rn3gqgG9bLwnco1N4PJnho0', // from dashboard
   );

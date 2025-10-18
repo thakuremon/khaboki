@@ -15,6 +15,7 @@ class _UserRegistrationPage extends State<UserRegistrationPage> {
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
   ErrorMessage error = ErrorMessage();
+  String? photoUrl;
 
   ErrorMessage nameError = ErrorMessage();
   ErrorMessage studentIdError = ErrorMessage();
@@ -203,6 +204,15 @@ class _UserRegistrationPage extends State<UserRegistrationPage> {
 
               ElevatedButton(
                 onPressed: () async {
+                  photoUrl = await pickAndUploadImage(context);
+                },
+                child: const Text('Upload Image'),
+              ),
+
+              SizedBox(height: 10),
+
+              ElevatedButton(
+                onPressed: () async {
                   if (passwordController.text !=
                           confirmPasswordController.text ||
                       !isFormValid) {
@@ -231,7 +241,7 @@ class _UserRegistrationPage extends State<UserRegistrationPage> {
                       emailController.text,
                       phoneController.text,
                       'user',
-                      user.photoURL ?? '',
+                      photoUrl ?? '',
                     );
                     HelperFunction.navigate(context, VerifyEmailScreen());
                   } else {
